@@ -11,7 +11,6 @@ interface UsersAttributes {
   address:string;
   password:string;
 }
-
 export class UserInstance extends Model<UsersAttributes> {}
 
 UserInstance.init({
