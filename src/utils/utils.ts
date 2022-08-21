@@ -22,10 +22,10 @@ export const updateTodoSchema = Joi.object().keys({
     brand:Joi.string(),
     category:Joi.string(),
     description:Joi.string(),
-    price:Joi.string(),
-    countInStock:Joi.string(),
-    rating:Joi.string(),
-    numReviews:Joi.string()
+    price:Joi.number(),
+    countInStock:Joi.number(),
+    rating:Joi.number(),
+    numReviews:Joi.number()
 });
 
 

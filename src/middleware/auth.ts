@@ -5,13 +5,15 @@ import {UserInstance} from '../model/user'
 
 export async function auth(req:Request | any, res:Response, next:NextFunction){
     try{
-        const authorization = req.headers.authorization;
+        const authorization = req.cookies.token
     if(!authorization){
       res.status(401).json({
         Error: 'Kindly sign in as a user'
       }) 
     }
-    const token = authorization?.slice(7, authorization.length) as string
+    // const token = authorization?.slice(7, authorization.length) as string
+
+    const token = authorization;
 
     let verified = jwt.verify(token, secret);
 

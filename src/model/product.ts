@@ -12,6 +12,7 @@ interface ProductAttributes {
   countInStock: number;
   rating: number;
   numReviews: number;
+  
 }
 
 export class ProductInstance extends Model<ProductAttributes> {}

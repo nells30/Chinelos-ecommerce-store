@@ -21,10 +21,11 @@ async function Products(req, res, next) {
             ...req.body,
             userId: verified.id,
         });
-        res.status(201).json({
-            msg: "You have successfully created a product",
-            record,
-        });
+        res.redirect('/users/dashboard');
+        // res.status(201).json({
+        //   msg: "You have successfully created a product",
+        //   record,
+        // });
     }
     catch (err) {
         res.status(500).json({
@@ -50,8 +51,8 @@ async function getProducts(req, res, next) {
         res.render("index", { record });
         // res.status(200).json({
         //   msg: "You have successfully fetched all products",
-        //   count: record.count,
-        //   record: record.rows
+        //   //count: record,
+        //   record: record
         // });
     }
     catch (error) {
@@ -67,10 +68,12 @@ async function getSingleProduct(req, res, next) {
     try {
         const { id } = req.params;
         const record = await product_1.ProductInstance.findOne({ where: { id } });
-        return res.status(200).json({
-            msg: "Successfully gotten user information",
-            record,
-        });
+        if (record) {
+            return record;
+        }
+        else {
+            res.status(400).json({ msg: "product not found" });
+        }
     }
     catch (error) {
         res.status(500).json({
@@ -80,20 +83,71 @@ async function getSingleProduct(req, res, next) {
     }
 }
 exports.getSingleProduct = getSingleProduct;
+// export async function updateProduct(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const { id } = req.params;
+//     const {name,
+//       image,
+//       brand,
+//       category,
+//       description,
+//       price,
+//       countInStock,
+//       rating,
+//       numReviews } = req.body;
+//     const validationResult = updateTodoSchema.validate(req.body, options);
+//     if (validationResult.error) {
+//       return res.status(400).json({
+//         Error: validationResult.error.details[0].message,
+//       });
+//     }
+//     const record = await ProductInstance.findOne({ where: { id } });
+//     if (!record) {
+//       return res.status(404).json({
+//         Error: "Cannot find existing product",
+//       });
+//     }
+//     const updatedrecord = await record.update({
+//       name: name,
+//       image: image,
+//       brand: brand,
+//       category: category,
+//       description: description,
+//       price: price,
+//       countInStock: countInStock,
+//       rating: rating,
+//       numReviews: numReviews
+//     });
+//     res.status(200).json({
+//       msg: "You have successfully updated your product",
+//       updatedrecord,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       msg: "failed to update",
+//       route: "/update/:id",
+//     });
+//   }
+// }
 async function updateProduct(req, res, next) {
     try {
         const { id } = req.params;
         const { name, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
-        const validationResult = utils_1.updateTodoSchema.validate(req.body, utils_1.options);
-        if (validationResult.error) {
+        const { error } = utils_1.updateTodoSchema.validate(req.body, utils_1.options);
+        if (error) {
+            const msg = error.details.map(err => err.message).join(',');
             return res.status(400).json({
-                Error: validationResult.error.details[0].message,
+                Error: msg
             });
         }
         const record = await product_1.ProductInstance.findOne({ where: { id } });
         if (!record) {
             return res.status(404).json({
-                Error: "Cannot find existing product",
+                Error: "Cannot find existing todo",
             });
         }
         const updatedrecord = await record.update({
@@ -105,17 +159,18 @@ async function updateProduct(req, res, next) {
             price: price,
             countInStock: countInStock,
             rating: rating,
-            numReviews: numReviews,
+            numReviews: numReviews
         });
-        res.status(200).json({
-            msg: "You have successfully updated your product",
-            updatedrecord,
-        });
+        res.redirect('/users/dashboard');
+        // res.status(200).json({
+        //         msg: "You have successfully updated your product",
+        //         updatedrecord,
+        //       });
     }
     catch (error) {
         res.status(500).json({
             msg: "failed to update",
-            route: "/update/:id",
+            route: "/update/:id"
         });
     }
 }
@@ -130,10 +185,11 @@ async function deleteProduct(req, res, next) {
             });
         }
         const deletedRecord = await record.destroy();
-        return res.status(200).json({
-            msg: "Product deleted successfully",
-            deletedRecord,
-        });
+        res.redirect('/products/dashboard');
+        // return res.status(200).json({
+        //   msg: "Product deleted successfully",
+        //   deletedRecord,
+        // });
     }
     catch (error) {
         res.status(500).json({

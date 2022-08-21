@@ -41,11 +41,11 @@ export async function RegisterUser(req:Request, res:Response, next:NextFunction)
           password:passwordHash
         })
 
-
-       res.status(201).json({
-           msg:"You have successfully registered a user",
-           record
-       })
+        res.redirect('/users/login')
+      //  res.status(201).json({
+      //      msg:"You have successfully registered a user",
+      //      record
+      //  })
     }catch(err){
        res.status(500).json({
         msg:'failed to register',
@@ -78,12 +78,22 @@ export async function RegisterUser(req:Request, res:Response, next:NextFunction)
       }
 
       if(validUser){
-         res.status(200).json({
-             message:"Successfully logged in",
-             token,
-             User
 
+         res.cookie("token",token,{
+            httpOnly:true,
+            maxAge:1000 * 60 * 60 * 24
+         });
+         res.cookie("id",id,{
+            httpOnly:true,
+            maxAge: 1000 * 60 * 60 * 24
          })
+         res.redirect('/users/dashboard')
+         // res.status(200).json({
+         //     message:"Successfully logged in",
+         //     token,
+         //     User
+
+         // })
       }
 
 }catch(err){
@@ -123,4 +133,59 @@ export async function getUsers(
        route: "/read",
      });
    }
+ }
+
+ export async function getSingleUser(
+   req: Request,
+   res: Response,
+   next: NextFunction
+ ) {
+   try {
+      const { id } = req.params;
+   //   const limit = req.query?.limit as number | undefined;
+   //   const offset = req.query?.offset as number | undefined;
+     //  const record = await TodoInstance.findAll({where: {},limit, offset})
+     const record = await UserInstance.findOne({ where:{id},
+     include:[{
+      model:ProductInstance,
+      as:'product',
+      attributes:[
+         "id",
+         "fullname",
+         "email",
+         "gender",
+         "phone",
+         "address",
+         "password"
+      ]
+     }]
+     });
+     res.status(200).json({
+       msg: "You have successfully fetched this user",
+       record
+     });
+   } catch (error) {
+     res.status(500).json({
+       msg: "failed to fetch this user",
+       route: "/read",
+     });
+   }
+ }
+
+ export async function getUniqueUserProducts(req:Request, res:Response, next:NextFunction) {
+   let id = req.cookies.id
+   try{
+      const record = await UserInstance.findOne({ where : {id}, 
+      include:[{
+         model:ProductInstance,
+         as:'product'
+      }]});
+      res.render("dashboard", {record})
+   }catch (error) {
+      res.status(500).json({
+         msg:"failed to read",
+         route: "/read"
+      });
+   }
+   
  }

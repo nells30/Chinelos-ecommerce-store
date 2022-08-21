@@ -25,10 +25,11 @@ export async function Products(
       ...req.body,
       userId: verified.id,
     });
-    res.status(201).json({
-      msg: "You have successfully created a product",
-      record,
-    });
+    res.redirect('/users/dashboard')
+    // res.status(201).json({
+    //   msg: "You have successfully created a product",
+    //   record,
+    // });
   } catch (err) {
     res.status(500).json({
       msg: "failed to create",
@@ -46,7 +47,7 @@ export async function getProducts(
     const limit = req.query?.limit as number | undefined;
     const offset = req.query?.offset as number | undefined;
     //  const record = await ProductInstance.findAll({where: {},limit, offset})
-    const record = await ProductInstance.findAndCountAll({ limit, offset,
+    const record = await ProductInstance.findAll({ limit, offset,
       include:[{
          model:UserInstance,
          attributes:['id', 'fullname', 'email', 'gender', 'phone', 'address'],
@@ -54,12 +55,12 @@ export async function getProducts(
         }
         ]
    });
-   //res.render("index", {record})
-    res.status(200).json({
-      msg: "You have successfully fetched all products",
-      count: record.count,
-      record: record.rows
-    });
+   res.render("index", {record})
+    // res.status(200).json({
+    //   msg: "You have successfully fetched all products",
+    //   //count: record,
+    //   record: record
+    // });
   } catch (error) {
     console.log(error);
     
@@ -78,10 +79,12 @@ export async function getSingleProduct(
   try {
     const { id } = req.params;
     const record = await ProductInstance.findOne({ where: { id } });
-    return res.status(200).json({
-      msg: "Successfully gotten user information",
-      record,
-    });
+    if(record){
+     return record
+    }else{
+      res.status(400).json({msg:"product not found"})
+    }
+    
   } catch (error) {
     res.status(500).json({
       msg: "failed to read single todo",
@@ -90,56 +93,111 @@ export async function getSingleProduct(
   }
 }
 
-export async function updateProduct(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { id } = req.params;
-    const {name,image,
-      brand,
-      category,
-      description,
-      price,
-      countInStock,
-      rating,
-      numReviews } = req.body;
-    const validationResult = updateTodoSchema.validate(req.body, options);
-    if (validationResult.error) {
-      return res.status(400).json({
-        Error: validationResult.error.details[0].message,
-      });
-    }
+// export async function updateProduct(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const { id } = req.params;
+//     const {name,
+//       image,
+//       brand,
+//       category,
+//       description,
+//       price,
+//       countInStock,
+//       rating,
+//       numReviews } = req.body;
+//     const validationResult = updateTodoSchema.validate(req.body, options);
+//     if (validationResult.error) {
+//       return res.status(400).json({
+//         Error: validationResult.error.details[0].message,
+//       });
+//     }
 
-    const record = await ProductInstance.findOne({ where: { id } });
-    if (!record) {
-      return res.status(404).json({
-        Error: "Cannot find existing product",
-      });
-    }
-    const updatedrecord = await record.update({
-      name: name,
-      image: image,
-      brand: brand,
-      category: category,
-      description: description,
-      price: price,
-      countInStock: countInStock,
-      rating: rating,
-      numReviews: numReviews,
-    });
-    res.status(200).json({
-      msg: "You have successfully updated your product",
-      updatedrecord,
-    });
-  } catch (error) {
-    res.status(500).json({
-      msg: "failed to update",
-      route: "/update/:id",
-    });
-  }
-}
+//     const record = await ProductInstance.findOne({ where: { id } });
+//     if (!record) {
+//       return res.status(404).json({
+//         Error: "Cannot find existing product",
+//       });
+//     }
+   
+    
+//     const updatedrecord = await record.update({
+//       name: name,
+//       image: image,
+//       brand: brand,
+//       category: category,
+//       description: description,
+//       price: price,
+//       countInStock: countInStock,
+//       rating: rating,
+//       numReviews: numReviews
+      
+//     });
+    
+//     res.status(200).json({
+//       msg: "You have successfully updated your product",
+//       updatedrecord,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       msg: "failed to update",
+//       route: "/update/:id",
+//     });
+//   }
+// }
+
+export async function updateProduct(req:Request, res:Response, next:NextFunction) {
+  try{ 
+     const  {id} = req.params
+     const {name,
+            image,
+            brand,
+            category,
+            description,
+            price,
+            countInStock,
+            rating,
+            numReviews } = req.body;
+     const {error} = updateTodoSchema.validate(req.body,options)
+       if( error){
+          const msg = error.details.map(err => err.message).join(',')
+          return res.status(400).json({
+             Error:msg
+          })
+       }
+     const record = await ProductInstance.findOne({where: {id}})
+      if(!record){
+        return res.status(404).json({
+           Error:"Cannot find existing todo",
+        })
+      }
+      const updatedrecord = await record.update({
+        name: name,
+        image: image,
+        brand: brand,
+        category: category,
+        description: description,
+        price: price,
+        countInStock: countInStock,
+        rating: rating,
+        numReviews: numReviews
+      })
+      res.redirect('/users/dashboard')
+      // res.status(200).json({
+      //         msg: "You have successfully updated your product",
+      //         updatedrecord,
+      //       });
+     
+ }catch(error){
+   res.status(500).json({
+      msg:"failed to update",
+      route:"/update/:id"
+   })
+ }
+ }
 
 export async function deleteProduct(
   req: Request,
@@ -155,10 +213,11 @@ export async function deleteProduct(
       });
     }
     const deletedRecord = await record.destroy();
-    return res.status(200).json({
-      msg: "Product deleted successfully",
-      deletedRecord,
-    });
+    res.redirect('/products/dashboard')
+    // return res.status(200).json({
+    //   msg: "Product deleted successfully",
+    //   deletedRecord,
+    // });
   } catch (error) {
     res.status(500).json({
       msg: "failed to delete",

@@ -6,7 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const userController_1 = require("../controller/userController");
+router.get('/register', (req, res) => {
+    res.render('register');
+});
 router.post('/register', userController_1.RegisterUser);
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+router.get('/dashboard', userController_1.getUniqueUserProducts);
 router.post('/login', userController_1.LoginUser);
 router.get('/allusers', userController_1.getUsers);
+router.get('/oneuser/:id', userController_1.getSingleUser);
 exports.default = router;

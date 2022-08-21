@@ -9,13 +9,14 @@ const secret = process.env.JWT_SECRET;
 const user_1 = require("../model/user");
 async function auth(req, res, next) {
     try {
-        const authorization = req.headers.authorization;
+        const authorization = req.cookies.token;
         if (!authorization) {
             res.status(401).json({
                 Error: 'Kindly sign in as a user'
             });
         }
-        const token = authorization?.slice(7, authorization.length);
+        // const token = authorization?.slice(7, authorization.length) as string
+        const token = authorization;
         let verified = jsonwebtoken_1.default.verify(token, secret);
         if (!verified) {
             return res.status(401).json({

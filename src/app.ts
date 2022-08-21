@@ -6,8 +6,8 @@ import logger from 'morgan'
 import db from './config/database.config'
 
 
-import signUpRouter from './routes/signUpUser'
-import loginRouter from './routes/loginUser'
+// import signUpRouter from './routes/signUpUser'
+// import loginRouter from './routes/loginUser'
 import userRouter from './routes/user';
 import productRouter from './routes/product';
 
@@ -30,11 +30,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join('public')));
+app.use(express.static(path.join(__dirname,"..",'public')));
 
 
-app.use("/", signUpRouter);
-app.use("/", loginRouter);
+// app.use("/", signUpRouter);
+// app.use("/", loginRouter);
 app.use('/users', userRouter);
 app.use('/products', productRouter);
 

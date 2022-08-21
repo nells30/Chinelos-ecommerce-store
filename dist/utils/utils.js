@@ -25,10 +25,10 @@ exports.updateTodoSchema = joi_1.default.object().keys({
     brand: joi_1.default.string(),
     category: joi_1.default.string(),
     description: joi_1.default.string(),
-    price: joi_1.default.string(),
-    countInStock: joi_1.default.string(),
-    rating: joi_1.default.string(),
-    numReviews: joi_1.default.string()
+    price: joi_1.default.number(),
+    countInStock: joi_1.default.number(),
+    rating: joi_1.default.number(),
+    numReviews: joi_1.default.number()
 });
 exports.registerSchema = joi_1.default.object().keys({
     fullname: joi_1.default.string().required(),

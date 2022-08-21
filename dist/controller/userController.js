@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUsers = exports.LoginUser = exports.RegisterUser = void 0;
+exports.getUniqueUserProducts = exports.getSingleUser = exports.getUsers = exports.LoginUser = exports.RegisterUser = void 0;
 const uuid_1 = require("uuid");
 const utils_1 = require("../utils/utils");
 const user_1 = require("../model/user");
@@ -40,10 +40,11 @@ async function RegisterUser(req, res, next) {
             address: req.body.address,
             password: passwordHash
         });
-        res.status(201).json({
-            msg: "You have successfully registered a user",
-            record
-        });
+        res.redirect('/users/login');
+        //  res.status(201).json({
+        //      msg:"You have successfully registered a user",
+        //      record
+        //  })
     }
     catch (err) {
         res.status(500).json({
@@ -72,11 +73,20 @@ async function LoginUser(req, res, next) {
             });
         }
         if (validUser) {
-            res.status(200).json({
-                message: "Successfully logged in",
-                token,
-                User
+            res.cookie("token", token, {
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60 * 24
             });
+            res.cookie("id", id, {
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60 * 24
+            });
+            res.redirect('/users/dashboard');
+            // res.status(200).json({
+            //     message:"Successfully logged in",
+            //     token,
+            //     User
+            // })
         }
     }
     catch (err) {
@@ -113,3 +123,55 @@ async function getUsers(req, res, next) {
     }
 }
 exports.getUsers = getUsers;
+async function getSingleUser(req, res, next) {
+    try {
+        const { id } = req.params;
+        //   const limit = req.query?.limit as number | undefined;
+        //   const offset = req.query?.offset as number | undefined;
+        //  const record = await TodoInstance.findAll({where: {},limit, offset})
+        const record = await user_1.UserInstance.findOne({ where: { id },
+            include: [{
+                    model: product_1.ProductInstance,
+                    as: 'product',
+                    attributes: [
+                        "id",
+                        "fullname",
+                        "email",
+                        "gender",
+                        "phone",
+                        "address",
+                        "password"
+                    ]
+                }]
+        });
+        res.status(200).json({
+            msg: "You have successfully fetched this user",
+            record
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: "failed to fetch this user",
+            route: "/read",
+        });
+    }
+}
+exports.getSingleUser = getSingleUser;
+async function getUniqueUserProducts(req, res, next) {
+    let id = req.cookies.id;
+    try {
+        const record = await user_1.UserInstance.findOne({ where: { id },
+            include: [{
+                    model: product_1.ProductInstance,
+                    as: 'product'
+                }] });
+        res.render("dashboard", { record });
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: "failed to read",
+            route: "/read"
+        });
+    }
+}
+exports.getUniqueUserProducts = getUniqueUserProducts;

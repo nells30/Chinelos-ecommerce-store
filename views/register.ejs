@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='/stylesheets/signUpStyle.css' />
+</head>
+<body>
+    <div class="container">
+        <form id="form" class="form" action="/users/register" method="post">
+            <h2>Sign Up!</h2>
+            <div class="form-ctl">
+                <label for="user">fullname</label>
+                <input type="text" id="user" placeholder="Enter fullname" name="fullname">
+                <span>Error Message</span>
+            </div>
+            <div class="form-ctl">
+                <label for="email">email</label>
+                <input type="text" id="email" placeholder="Enter email" name="email">
+                <span>Error Message</span>
+            </div>
+            <div class="form-ctl">
+                <label for="gender">gender</label>
+                <input type="text" id="gender" placeholder="Enter gender" name="gender">
+                <span>Error Message</span>
+            </div>
+            <div class="form-ctl">
+                <label for="phone">phone</label>
+                <input type="text" id="phone" placeholder="Enter phone" name="phone">
+                <span>Error Message</span>
+            </div>
+            <div class="form-ctl">
+                <label for="address">address</label>
+                <input type="text" id="address" placeholder="Enter address" name="address">
+                <span>Error Message</span>
+            </div>
+            <div class="form-ctl">
+                <label for="password">password</label>
+                <input type="password" id="password" placeholder="Enter password" name="password">
+                <span>Error Message</span>
+            </div>
+            <div class="form-ctl">
+                <label for="passwordConfirm">Confirm Password</label>
+                <input type="password" id="passwordConfirm" placeholder="Confirm Password" name="confirm_password">
+                <span>Error Message</span>
+            </div>
+            <button>Register Me</button>
+        </form>
+    </div>
+</body>
+</html>
