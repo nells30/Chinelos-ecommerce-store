@@ -16,7 +16,7 @@ export const createTodoSchema = Joi.object().keys({
     numReviews: Joi.number().required(),
 });
 
-export const updateTodoSchema = Joi.object().keys({
+export const updateProductSchema = Joi.object().keys({
     name:Joi.string(),
     image:Joi.string(),
     brand:Joi.string(),

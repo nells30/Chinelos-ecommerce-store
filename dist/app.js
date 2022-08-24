@@ -13,6 +13,7 @@ const database_config_1 = __importDefault(require("./config/database.config"));
 // import loginRouter from './routes/loginUser'
 const user_1 = __importDefault(require("./routes/user"));
 const product_1 = __importDefault(require("./routes/product"));
+const home_1 = __importDefault(require("./routes/home"));
 database_config_1.default.sync().then(() => {
     //force:true helps update the database automatically
     console.log('Database connected succcesfully');
@@ -32,6 +33,7 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "..", 'public'))
 // app.use("/", loginRouter);
 app.use('/users', user_1.default);
 app.use('/products', product_1.default);
+app.use('/', home_1.default);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next((0, http_errors_1.default)(404));
