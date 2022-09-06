@@ -16,7 +16,7 @@ ProductInstance.init({
     },
     name: {
         type: sequelize_1.DataTypes.STRING,
-        primaryKey: true,
+        primaryKey: false,
         allowNull: false
     },
     image: {

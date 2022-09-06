@@ -41,7 +41,15 @@ export async function RegisterUser(req:Request, res:Response, next:NextFunction)
           password:passwordHash
         })
 
-        res.redirect('/users/login')
+        const postmanRegisterUser = req.headers['postman-token']
+        if(postmanRegisterUser){
+         res.status(201).json({
+           msg:"You have successfully registered a user",
+           record
+         })
+        }else{
+         res.redirect('/users/login')
+        }
       //  res.status(201).json({
       //      msg:"You have successfully registered a user",
       //      record
@@ -87,7 +95,16 @@ export async function RegisterUser(req:Request, res:Response, next:NextFunction)
             httpOnly:true,
             maxAge: 1000 * 60 * 60 * 24
          })
-         res.redirect('/users/dashboard')
+         const postmanLoginUser = req.headers['postman-token']
+         if(postmanLoginUser){
+            res.status(200).json({
+            message:"Successfully logged in",
+            token,
+            User
+         })
+         }else{
+            res.redirect('/users/dashboard')
+         }
          // res.status(200).json({
          //     message:"Successfully logged in",
          //     token,
@@ -145,7 +162,7 @@ export async function getUsers(
    //   const limit = req.query?.limit as number | undefined;
    //   const offset = req.query?.offset as number | undefined;
      //  const record = await TodoInstance.findAll({where: {},limit, offset})
-     const record = await UserInstance.findOne({ where:{id},
+     const record = await UserInstance.findOne({ where: {id},
      include:[{
       model:ProductInstance,
       as:'product',
@@ -180,6 +197,12 @@ export async function getUsers(
          model:ProductInstance,
          as:'product'
       }]});
+      const postmanGetUniqueUserProducts = req.headers['postman-token']
+      if(postmanGetUniqueUserProducts){
+         return res.status(200).json({
+            record
+         })
+      }
       res.render("dashboard", {record})
    }catch (error) {
       res.status(500).json({
@@ -189,3 +212,38 @@ export async function getUsers(
    }
    
  }
+
+
+
+ export async function redirectToDashboard(req:Request, res:Response, next:NextFunction) {
+   let id = req.cookies.id
+   try{
+      const record = await UserInstance.findOne({ where : {id}, 
+      include:[{
+         model:ProductInstance,
+         as:'product'
+      }]});
+      res.redirect("/users/dashboard")
+   }catch (error) {
+      res.status(500).json({
+         msg:"failed to read",
+         route: "/read"
+      });
+   }
+   
+ }
+
+
+ export async function logout(req:Request, res:Response){
+
+   res.clearCookie('token')
+
+   // res.status(200).json({
+
+   //    message: "you have succesfully logged out"
+
+   // })
+
+   res.redirect("/")
+
+}

@@ -24,7 +24,7 @@ primaryKey:true
   },
   name: {
     type:DataTypes.STRING,
-    primaryKey:true,
+    primaryKey:false,
     allowNull:false
   },
   image:{

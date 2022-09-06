@@ -9,56 +9,56 @@
 </head>
 <body>
     <div class="container">
-        <form id="form" class="form" action="/products/<%=record.id%>" method="post">
-            <h2>Create New Product</h2>
+        <form id="form" class="form" action="/products/update/<%=record.id%>" method="post">
+            <h2>Edit Form</h2>
             <div class="form-ctl">
                 <label for="user">name</label>
-                <input type="text" id="user" placeholder="Enter fullname" name="name" value="<%=record.name%>">
+                <input type="text" id="name" placeholder="Enter name" name="name" value="<%=record.name%>">
                 
             </div>
             <div class="form-ctl">
                 <label for="image">image</label>
-                <input type="text" id="email" placeholder="Enter email" name="image" value="<%=record.image%>">
+                <input type="text" id="image" placeholder="Enter image" name="image" value="<%=record.image%>">
              
             </div>
             <div class="form-ctl">
                 <label for="brand">brand</label>
-                <input type="text" id="gender" placeholder="Enter gender" name="brand" value="<%=record.brand%>">
+                <input type="text" id="brand" placeholder="Enter brand" name="brand" value="<%=record.brand%>">
              
             </div>
             <div class="form-ctl">
                 <label for="category">category</label>
-                <input type="text" id="phone" placeholder="Enter phone" name="category" value="<%=record.category%>">
+                <input type="text" id="category" placeholder="Enter category" name="category" value="<%=record.category%>">
                
             </div>
             <div class="form-ctl">
                 <label for="description">description</label>
-                <input type="text" id="address" placeholder="Enter address" name="description" value="<%=record.description%>">
+                <input type="text" id="description" placeholder="Enter description" name="description" value="<%=record.description%>">
                 
             </div>
             <div class="form-ctl">
                 <label for="price">price</label>
-                <input type="text" id="password" placeholder="Enter password" name="price" value="<%=record.price%>">
+                <input type="text" id="price" placeholder="Enter price" name="price" value="<%=record.price%>">
                 
             </div>
             <div class="form-ctl">
                 <label for="countInStock">count In Stock</label>
-                <input type="text" id="passwordConfirm" placeholder="Confirm Password" name="countInStock" value="<%=record.countInStock%>">
+                <input type="text" id="count In Stock" placeholder="" name="countInStock" value="<%=record.countInStock%>">
         
             </div>
 
             <div class="form-ctl">
                 <label for="countInStock">rating</label>
-                <input type="text" id="rating" placeholder="Confirm Password" name="rating" value="<%=record.rating%>">
+                <input type="text" id="rating" placeholder="Enter rating" name="rating" value="<%=record.rating%>">
         
             </div>
 
             <div class="form-ctl">
                 <label for="countInStock">numReviews</label>
-                <input type="text" id="passwordConfirm" placeholder="Confirm Password" name="numReviews" value="<%=record.numReviews%>">
+                <input type="text" id="numReviews" placeholder="Enter number of reviews" name="numReviews" value="<%=record.numReviews%>">
         
             </div>
-            <button>Create Product</button>
+            <button>Edit Product</button>
         </form>
     </div>
 </body>

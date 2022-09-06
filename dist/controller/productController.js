@@ -21,7 +21,16 @@ async function Products(req, res, next) {
             ...req.body,
             userId: verified.id,
         });
-        res.redirect('/users/dashboard');
+        const postmanCreate = req.headers['postman-token'];
+        if (postmanCreate) {
+            res.status(201).json({
+                msg: "You have successfully created a product",
+                record,
+            });
+        }
+        else {
+            res.redirect('/users/dashboard');
+        }
         // res.status(201).json({
         //   msg: "You have successfully created a product",
         //   record,
@@ -48,7 +57,17 @@ async function getProducts(req, res, next) {
                 }
             ]
         });
-        res.render("index", { record });
+        const postmanGetAll = req.headers['postman-token'];
+        if (postmanGetAll) {
+            res.status(200).json({
+                msg: "You have successfully fetched all products",
+                //count: record,
+                record: record
+            });
+        }
+        else {
+            res.render("index", { record });
+        }
         // res.status(200).json({
         //   msg: "You have successfully fetched all products",
         //   //count: record,
@@ -66,78 +85,34 @@ async function getProducts(req, res, next) {
 exports.getProducts = getProducts;
 async function getSingleProduct(req, res, next) {
     try {
+        //console.log("before");
         const { id } = req.params;
+        //console.log("after");
         const record = await product_1.ProductInstance.findOne({ where: { id } });
         if (record) {
-            return record;
-        }
-        else {
-            res.status(400).json({ msg: "product not found" });
+            const apiData = req.headers['postman-token'];
+            if (apiData) {
+                return res.status(200).json({ record });
+            }
+            else {
+                res.render('edit', { record });
+            }
         }
     }
     catch (error) {
         res.status(500).json({
-            msg: "failed to read single todo",
+            msg: "failed to read single product",
             route: "/read/:id",
         });
     }
 }
 exports.getSingleProduct = getSingleProduct;
-// export async function updateProduct(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) {
-//   try {
-//     const { id } = req.params;
-//     const {name,
-//       image,
-//       brand,
-//       category,
-//       description,
-//       price,
-//       countInStock,
-//       rating,
-//       numReviews } = req.body;
-//     const validationResult = updateTodoSchema.validate(req.body, options);
-//     if (validationResult.error) {
-//       return res.status(400).json({
-//         Error: validationResult.error.details[0].message,
-//       });
-//     }
-//     const record = await ProductInstance.findOne({ where: { id } });
-//     if (!record) {
-//       return res.status(404).json({
-//         Error: "Cannot find existing product",
-//       });
-//     }
-//     const updatedrecord = await record.update({
-//       name: name,
-//       image: image,
-//       brand: brand,
-//       category: category,
-//       description: description,
-//       price: price,
-//       countInStock: countInStock,
-//       rating: rating,
-//       numReviews: numReviews
-//     });
-//     res.status(200).json({
-//       msg: "You have successfully updated your product",
-//       updatedrecord,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       msg: "failed to update",
-//       route: "/update/:id",
-//     });
-//   }
-// }
 async function updateProduct(req, res, next) {
     try {
         const { id } = req.params;
         const { name, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
-        const { error } = utils_1.updateTodoSchema.validate(req.body, utils_1.options);
+        console.log("##########", req.body);
+        const { error } = utils_1.updateProductSchema.validate(req.body, utils_1.options);
         if (error) {
             const msg = error.details.map(err => err.message).join(',');
             return res.status(400).json({
@@ -145,23 +120,34 @@ async function updateProduct(req, res, next) {
             });
         }
         const record = await product_1.ProductInstance.findOne({ where: { id } });
+        console.log("record", record);
         if (!record) {
             return res.status(404).json({
-                Error: "Cannot find existing todo",
+                Error: "Cannot find existing product",
             });
         }
         const updatedrecord = await record.update({
-            name: name,
-            image: image,
-            brand: brand,
-            category: category,
-            description: description,
-            price: price,
-            countInStock: countInStock,
-            rating: rating,
-            numReviews: numReviews
+            name,
+            image,
+            brand,
+            category,
+            description,
+            price,
+            countInStock,
+            rating,
+            numReviews
         });
-        res.redirect('/users/dashboard');
+        console.log("@@@@@", updatedrecord);
+        const postmanUpdate = req.headers['postman-token'];
+        if (postmanUpdate) {
+            res.status(200).json({
+                msg: "You have successfully updated your product",
+                updatedrecord
+            });
+        }
+        else {
+            res.redirect('/users/dashboard');
+        }
         // res.status(200).json({
         //         msg: "You have successfully updated your product",
         //         updatedrecord,
@@ -185,11 +171,17 @@ async function deleteProduct(req, res, next) {
             });
         }
         const deletedRecord = await record.destroy();
-        res.redirect('/products/dashboard');
-        // return res.status(200).json({
-        //   msg: "Product deleted successfully",
-        //   deletedRecord,
-        // });
+        console.log('Testing testing testing');
+        const postmanDelete = req.headers['postman-token'];
+        if (postmanDelete) {
+            return res.status(200).json({
+                msg: "Product deleted successfully",
+                deletedRecord
+            });
+        }
+        else {
+            res.redirect('/users/dashboard');
+        }
     }
     catch (error) {
         res.status(500).json({

@@ -14,7 +14,10 @@ router.get('/login', (req, res) => {
     res.render('login');
 });
 router.get('/dashboard', userController_1.getUniqueUserProducts);
+router.get('/dashboard', userController_1.redirectToDashboard);
 router.post('/login', userController_1.LoginUser);
 router.get('/allusers', userController_1.getUsers);
-router.get('/oneuser/:id', userController_1.getSingleUser);
+router.get('/oneuser/:id', userController_1.getUniqueUserProducts);
+//router.delete('/logout', logout)
+router.get('/logout', userController_1.logout);
 exports.default = router;

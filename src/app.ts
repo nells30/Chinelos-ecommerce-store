@@ -10,6 +10,7 @@ import db from './config/database.config'
 // import loginRouter from './routes/loginUser'
 import userRouter from './routes/user';
 import productRouter from './routes/product';
+import homeRouter from './routes/home'
 
 db.sync().then(()=>{
   //force:true helps update the database automatically
@@ -37,6 +38,8 @@ app.use(express.static(path.join(__dirname,"..",'public')));
 // app.use("/", loginRouter);
 app.use('/users', userRouter);
 app.use('/products', productRouter);
+app.use('/', homeRouter)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

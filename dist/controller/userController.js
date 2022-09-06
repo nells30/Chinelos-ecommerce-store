@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUniqueUserProducts = exports.getSingleUser = exports.getUsers = exports.LoginUser = exports.RegisterUser = void 0;
+exports.logout = exports.redirectToDashboard = exports.getUniqueUserProducts = exports.getSingleUser = exports.getUsers = exports.LoginUser = exports.RegisterUser = void 0;
 const uuid_1 = require("uuid");
 const utils_1 = require("../utils/utils");
 const user_1 = require("../model/user");
@@ -40,7 +40,16 @@ async function RegisterUser(req, res, next) {
             address: req.body.address,
             password: passwordHash
         });
-        res.redirect('/users/login');
+        const postmanRegisterUser = req.headers['postman-token'];
+        if (postmanRegisterUser) {
+            res.status(201).json({
+                msg: "You have successfully registered a user",
+                record
+            });
+        }
+        else {
+            res.redirect('/users/login');
+        }
         //  res.status(201).json({
         //      msg:"You have successfully registered a user",
         //      record
@@ -81,7 +90,17 @@ async function LoginUser(req, res, next) {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24
             });
-            res.redirect('/users/dashboard');
+            const postmanLoginUser = req.headers['postman-token'];
+            if (postmanLoginUser) {
+                res.status(200).json({
+                    message: "Successfully logged in",
+                    token,
+                    User
+                });
+            }
+            else {
+                res.redirect('/users/dashboard');
+            }
             // res.status(200).json({
             //     message:"Successfully logged in",
             //     token,
@@ -165,6 +184,12 @@ async function getUniqueUserProducts(req, res, next) {
                     model: product_1.ProductInstance,
                     as: 'product'
                 }] });
+        const postmanGetUniqueUserProducts = req.headers['postman-token'];
+        if (postmanGetUniqueUserProducts) {
+            return res.status(200).json({
+                record
+            });
+        }
         res.render("dashboard", { record });
     }
     catch (error) {
@@ -175,3 +200,29 @@ async function getUniqueUserProducts(req, res, next) {
     }
 }
 exports.getUniqueUserProducts = getUniqueUserProducts;
+async function redirectToDashboard(req, res, next) {
+    let id = req.cookies.id;
+    try {
+        const record = await user_1.UserInstance.findOne({ where: { id },
+            include: [{
+                    model: product_1.ProductInstance,
+                    as: 'product'
+                }] });
+        res.redirect("/users/dashboard");
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: "failed to read",
+            route: "/read"
+        });
+    }
+}
+exports.redirectToDashboard = redirectToDashboard;
+async function logout(req, res) {
+    res.clearCookie('token');
+    // res.status(200).json({
+    //    message: "you have succesfully logged out"
+    // })
+    res.redirect("/");
+}
+exports.logout = logout;

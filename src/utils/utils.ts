@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken"
 
 export const createTodoSchema = Joi.object().keys({
     // title:Joi.string().lowercase().required(),
@@ -16,7 +16,7 @@ export const createTodoSchema = Joi.object().keys({
     numReviews: Joi.number().required(),
 });
 
-export const updateTodoSchema = Joi.object().keys({
+export const updateProductSchema = Joi.object().keys({
     name:Joi.string(),
     image:Joi.string(),
     brand:Joi.string(),
@@ -39,6 +39,22 @@ export const registerSchema = Joi.object().keys({
     confirm_password:Joi.ref("password")
 }).with('password', 'confirm_password')
 
+
+
+export const registerUserSchema = Joi.object().keys({
+    firstName: Joi.string().lowercase().required(),
+    lastName: Joi.string().lowercase().required(),
+    email: Joi.string().lowercase().required(),
+    phone: Joi.number().required(),
+    address: Joi.string().lowercase().required(),
+    country: Joi.string().lowercase().required(),
+    // reactScore: Joi.number(),
+    // nodeScore: Joi.number(),
+    // javaScore: Joi.number(),
+    // csharpScore: Joi.number(),
+    password:Joi.string().lowercase().required(),
+        confirm_password:Joi.ref("password")   
+    }).with('password', 'confirm_password');
 
 
 export const loginSchema = Joi.object().keys({
