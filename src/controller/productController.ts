@@ -105,7 +105,7 @@ export async function getSingleProduct(
       if (apiData){
         return res.status(200).json({record})
       }else{
-res.render('edit', {record})
+       res.render('edit', {record})
       }
       }  
   } catch (error) {
